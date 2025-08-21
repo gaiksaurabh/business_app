@@ -1,13 +1,36 @@
 # business_app/business_app/core/settings.py
 from pathlib import Path
 import os
+import environ
 
+# Initialize django-environ
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+
+# Set the project's base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# --- BASIC ---
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-insecure-key-change-me")
-DEBUG = True
-ALLOWED_HOSTS: list[str] = ["127.0.0.1", "localhost"]
+# Take environment variables from .env file during local development
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+# --- SECURITY ---
+# Raises Django's ImproperlyConfigured exception if SECRET_KEY not in os.environ
+SECRET_KEY = env('SECRET_KEY')
+
+# DEBUG is False by default, will be True only if DEBUG=True is in environment
+DEBUG = env('DEBUG')
+
+# --- HOSTS ---
+# Get the Render external hostname from the RENDER_EXTERNAL_HOSTNAME env var
+# If you are not using Render, you may need to adjust this
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME]
+else:
+    ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+
 
 SITE_ID = 1
 
@@ -18,16 +41,18 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "whitenoise.runserver_nostatic", # Add WhiteNoise
     "django.contrib.staticfiles",
     "django.contrib.sites",
-    "accounts",     # custom user app
-    "jobs",         # jobs app
+    "accounts",
+    "jobs",
     "widget_tweaks",
 ]
 
 # --- MIDDLEWARE ---
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware", # Add WhiteNoise middleware
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -41,16 +66,11 @@ ROOT_URLCONF = "core.urls"
 WSGI_APPLICATION = "core.wsgi.application"
 
 # --- DATABASE ---
+# Reads the DATABASE_URL environment variable
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("PGDATABASE", "businessdb"),
-        "USER": os.environ.get("PGUSER", "businessuser"),
-        "PASSWORD": os.environ.get("PGPASSWORD", "businesspass"),
-        "HOST": os.environ.get("PGHOST", "localhost"),
-        "PORT": os.environ.get("PGPORT", "5432"),
-    }
+    'default': env.db(),
 }
+
 
 # --- PASSWORDS ---
 AUTH_PASSWORD_VALIDATORS = [
@@ -62,7 +82,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # --- AUTH ---
 AUTH_USER_MODEL = "accounts.User"
 LOGIN_URL = "/accounts/login/"
-LOGIN_REDIRECT_URL = '/accounts/dashboard_home/'
+LOGIN_REDIRECT_URL = '/accounts/dashboard-home/'
 LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 CSRF_FAILURE_VIEW = 'accounts.views.csrf_failure'
@@ -78,6 +98,9 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# Enable WhiteNoise to serve static files in production
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
@@ -85,7 +108,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],  # global templates
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
