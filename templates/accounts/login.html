@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Business App</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .login-logo {
+            display: block;
+            margin: 0 auto 1rem auto;
+            width: 80px;
+            height: auto;
+        }
+
+        .form-check-inline input {
+            margin-right: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to right, #5a67d8, #6b46c1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+            z-index: 5;
+        }
+
+        .password-input-container {
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card">
+        <img src="{% static 'images/logo.png' %}" alt="Logo" class="login-logo">
+
+        <h4 class="text-center mb-4">Welcome Back</h4>
+        {% if messages %}
+        <div>
+            {% for message in messages %}
+            <p style="color: red; font-weight: bold;">
+                {{ message }}
+            </p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+
+        <form method="post" action="{% url 'accounts:login' %}">
+            {% csrf_token %}
+
+            <!-- User Type -->
+            <div class="mb-3 text-center">
+                <label class="form-label fw-semibold">Login as</label><br>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="role" value="admin" checked>
+                    <label class="form-check-label">Admin</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="role" value="staff">
+                    <label class="form-check-label">Staff</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="role" value="customer">
+                    <label class="form-check-label">Customer</label>
+                </div>
+            </div>
+
+            <!-- Username -->
+            <div class="mb-3">
+                <label for="username" class="form-label">Customer ID / Username</label>
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <div class="password-input-container">
+                    <input type="password" id="password" name="password" class="form-control" required>
+                    <span class="password-toggle" id="passwordToggle">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Remember me -->
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                <label class="form-check-label" for="remember">Remember me</label>
+            </div>
+
+            <!-- Error messages -->
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                Invalid username or password.
+            </div>
+            {% endif %}
+
+            <!-- Login button -->
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">Login</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        // This script prevents the browser from using a cached version of the page
+        // which can lead to a stale CSRF token.
+        if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
+            window.location.reload();
+        }
+
+        // Password visibility toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordToggle = document.getElementById('passwordToggle');
+            const passwordInput = document.getElementById('password');
+            
+            passwordToggle.addEventListener('click', function() {
+                // Toggle password visibility
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    passwordToggle.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                } else {
+                    passwordInput.type = 'password';
+                    passwordToggle.innerHTML = '<i class="fas fa-eye"></i>';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

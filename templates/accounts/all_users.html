@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+
+{% block title %}All Users{% endblock %}
+
+{% block content %}
+<div class="container">
+  {% if all_users %}
+  <div id="allUsers" class="bg-white rounded-xl shadow-lg p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold text-indigo-600">All Users</h2>
+
+      <div class="flex items-center space-x-4">
+        <input type="text" id="userSearch" placeholder="Search users..."
+          class="w-64 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-indigo-300">
+
+        <form id="uploadForm" enctype="multipart/form-data" class="inline">
+          {% csrf_token %}
+          <label for="excelUpload" class="icon-btn bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer"
+            title="Upload Excel">
+            <i class="fas fa-upload"></i>
+            <input type="file" id="excelUpload" name="excel_file" accept=".xlsx,.xls" class="hidden">
+          </label>
+        </form>
+
+        <div class="relative">
+          <div class="flex items-center space-x-2">
+            <a href="{% url 'accounts:download_excel' %}" class="icon-btn bg-green-600 text-white hover:bg-green-700"
+              download>
+              <i class="fas fa-file-excel"></i>
+            </a>
+            <a href="{% url 'accounts:download_pdf' %}" class="icon-btn bg-red-600 text-white hover:bg-red-700"
+              download>
+              <i class="fas fa-file-pdf"></i>
+            </a>
+          </div>
+        </div>
+
+        <a href="{% url 'accounts:recycle_bin' %}" class="icon-btn bg-gray-600 text-white hover:bg-gray-700"
+          title="Recycle Bin">
+          <i class="fa-solid fa-recycle"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table id="usersTable" class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
+        <thead>
+          <tr class="bg-indigo-50 text-indigo-700 font-semibold text-sm uppercase tracking-wide">
+            <th class="py-2 px-4 border">First Name</th>
+            <th class="py-2 px-4 border">Last Name</th>
+            <th class="py-2 px-4 border">User ID</th>
+            <th class="py-2 px-4 border">Email</th>
+            <th class="py-2 px-4 border">Password</th>
+            <th class="py-2 px-4 border">WhatsApp</th>
+            <th class="py-2 px-4 border">Press Name</th>
+            <th class="py-2 px-4 border">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="text-sm text-gray-600">
+          {% for u in all_users %}
+          <tr class="hover:bg-indigo-50 transition">
+            <td class="py-2 px-4 border font-medium">{{ u.first_name|default:"-" }}</td>
+            <td class="py-2 px-4 border font-medium">{{ u.last_name|default:"-" }}</td>
+            <td class="py-2 px-4 border">{{ u.username }}</td>
+            <td class="py-2 px-4 border">{{ u.email }}</td>
+            <td class="py-2 px-4 border">
+              {{ u|get_profile_field:'raw_password'|default:'-' }}
+            </td>
+            <td class="py-2 px-4 border">
+              {{ u|get_profile_field:'whatsapp_number'|default:'-' }}
+            </td>
+            <td class="py-2 px-4 border">
+              {{ u|get_profile_field:'press_name'|default:'-' }}
+            </td>
+            <td class="py-2 px-4 border">
+              <div class="flex space-x-2">
+                <a href="{% url 'accounts:edit_user' u.id %}" class="icon-btn bg-blue-600 text-white hover:bg-blue-700"
+                  title="Edit">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <form method="post" action="{% url 'accounts:delete_user' u.id %}" class="inline delete-form">
+                  {% csrf_token %}
+                  <button type="submit" class="icon-btn bg-red-600 text-white hover:bg-red-700" title="Delete">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </form>
+                {% if u|get_profile_field:'whatsapp_number' %}
+                <a href="{% url 'accounts:send_whatsapp_welcome' u.id %}" target="_blank"
+                  class="icon-btn bg-green-600 text-white hover:bg-green-700" title="Send WhatsApp Welcome">
+                  <i class="fab fa-whatsapp"></i>
+                </a>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="9" class="text-center py-3 text-gray-400 italic">No users found</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+  {% else %}
+  <p class="text-gray-600">You don't have permission to view all users.</p>
+  {% endif %}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Single delete confirmation
+    document.querySelectorAll('.delete-form').forEach(form => {
+      form.addEventListener('submit', function (e) {
+        if (!confirm('Are you sure you want to delete this user?')) {
+          e.preventDefault();
+        }
+      });
+    });
+
+    // Excel upload handling
+    document.getElementById('excelUpload')?.addEventListener('change', function () {
+      if (this.files.length > 0) {
+        const formData = new FormData(document.getElementById('uploadForm'));
+        fetch("{% url 'accounts:upload_users' %}", {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              window.location.reload();
+            } else {
+              alert(data.message || 'Error uploading file');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Error uploading file');
+          });
+      }
+    });
+
+    // Search functionality
+    document.getElementById('userSearch')?.addEventListener('keyup', function () {
+      const value = this.value.toLowerCase();
+      document.querySelectorAll("#usersTable tbody tr").forEach(function (row) {
+        const rowText = row.textContent.toLowerCase();
+        row.style.display = rowText.includes(value) ? "" : "none";
+      });
+    });
+
+    // Download dropdown toggle
+    const downloadButton = document.getElementById('downloadDropdownButton');
+    const downloadDropdown = document.getElementById('downloadDropdown');
+
+    if (downloadButton && downloadDropdown) {
+      downloadButton.addEventListener('click', function (e) {
+        e.stopPropagation();
+        downloadDropdown.classList.toggle('hidden');
+      });
+
+      // Close when clicking elsewhere
+      document.addEventListener('click', function () {
+        downloadDropdown.classList.add('hidden');
+      });
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akshardeep Offset Printers</title>
+    <style>
+        body{font-family:Arial,sans-serif;background-color:#f4f4f9;margin:0;padding:20px}
+        .container{background-color:#fff;padding:30px;border-radius:8px;box-shadow:0 4px 8px rgba(0,0,0,.1);width:100%;max-width:800px;margin:20px auto}
+        h1{text-align:center;color:#333;margin-bottom:10px}
+        p{text-align:center;color:#666;margin-bottom:30px}
+        .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+        .form-group{display:flex;flex-direction:column}
+        .form-group.full-width{grid-column:1/-1}
+        label{margin-bottom:8px;font-weight:700;color:#555}
+        input[type=text],input[type=date],input[type=number],select,textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;font-size:16px}
+        input[readonly]{background-color:#e9ecef;cursor:not-allowed}
+        .input-with-checkbox{display:flex;align-items:center;border:1px solid #ccc;border-radius:4px;padding-right:10px}
+        .input-with-checkbox input[type=number]{border:none;outline:none;width:100%}
+        .input-with-checkbox .fb-group{display:flex;align-items:center;white-space:nowrap}
+        .input-with-checkbox .fb-group input[type=checkbox]{margin-right:5px}
+        input:focus-within,.input-with-checkbox:focus-within{border-color:#007bff;outline:none;box-shadow:0 0 5px rgba(0,123,255,.25)}
+        button[type=submit]{background-color:#007bff;color:#fff;padding:12px 20px;border:none;border-radius:4px;cursor:pointer;font-size:16px;width:100%;margin-top:20px;transition:background-color .3s ease}
+        button[type=submit]:hover{background-color:#0056b3}
+        #message{margin-top:20px;text-align:center;font-size:16px}
+        #search-container{margin-top:40px;padding-top:20px;border-top:1px solid #eee}
+        #search-input{width:100%;padding:10px;font-size:16px;margin-bottom:20px;border:1px solid #ccc;border-radius:4px}
+        #data-table{width:100%;border-collapse:collapse}
+        #data-table th,#data-table td{border:1px solid #ddd;padding:8px;text-align:left}
+        #data-table th{background-color:#f2f2f2;font-weight:700}
+        #data-table tr:nth-child(even){background-color:#f9f9f9}
+        #data-table tr:hover{background-color:#f1f1f1}
+        .loader{text-align:center;padding:20px;font-size:18px;color:#888}
+        @media (max-width:600px){.form-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Akshardeep Offset Printers</h1>
+        <p>Job Entry Form</p>
+        <form id="jobForm">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="DATE" required>
+                </div>
+                <div class="form-group">
+                    <label for="partyName">Party Name</label>
+                    <input type="text" id="partyName" name="PARTY NAME" required>
+                </div>
+                <div class="form-group"><label for="jobSize">Job Size</label><select id="jobSize" name="JOB SIZE"><option value="">Select Size...</option><option value="12X18">12X18</option><option value="18X23">18X23</option><option value="15X20">15X20</option><option value="20X28">20X28</option><option value="10X15">10X15</option><option value="18X25">18X25</option></select></div>
+                <div class="form-group"><label for="paper">Paper</label><select id="paper" name="PAPER"><option value="">Select Paper...</option><option value="90 ART">90 ART</option><option value="100 BOND">100 BOND</option><option value="100 MAP">100 MAP</option><option value="120 ART">120 ART</option><option value="170 ART">170 ART</option><option value="250 ART">250 ART</option><option value="300 ART">300 ART</option><option value="300 ITC">300 ITC</option><option value="350 ITC">350 ITC</option><option value="STICKER">STICKER</option><option value="DUPLEX">DUPLEX</option><option value="CARDSHEET">CARDSHEET</option></select></div>
+                <div class="form-group"><label for="quantity">Quantity</label><div class="input-with-checkbox"><input type="number" id="quantity" name="QUANTITY" placeholder="e.g., 1000"><div class="fb-group"><input type="checkbox" id="fb" name="F/B" value="F/B"><label for="fb">F/B</label></div></div></div>
+                <div class="form-group"><label for="paymentType">Payment Type</label><select id="paymentType" name="PAYMENT TYPE"><option value="CREDIT">CREDIT</option><option value="RECIEVED">RECIEVED</option><option value="TEMPERORY">TEMPERORY</option><option value="BALANCE">BALANCE</option><option value="SHORT CREDIT">SHORT CREDIT</option></select></div>
+                <div class="form-group full-width"><label for="jobDetails">Job Details</label><input type="text" id="jobDetails" name="JOB DETAILS"></div>
+                <div class="form-group"><label for="ctp">CTP</label><select id="ctp" name="CTP"><option value="">Select CTP...</option><option value="SHIVKRUSHNA">SHIVKRUSHNA</option><option value="MAULI CTP">MAULI CTP</option><option value="COLOR TONE">COLOR TONE</option><option value="PARTY">PARTY</option></select></div>
+                <div class="form-group"><label for="paperBy">Paper By</label><select id="paperBy" name="PAPER BY"><option value="">Select Paper Source...</option><option value="PARTY">PARTY</option><option value="STOCK">STOCK</option><option value="AMBIKA">AMBIKA</option><option value="DURGA">DURGA</option><option value="VAISHNAVI">VAISHNAVI</option><option value="LAXMI">LAXMI</option></select></div>
+                <div class="form-group"><label for="lamination">Lamination</label><select id="lamination" name="LAMINATION"><option value="NA">NA</option><option value="SANVIDHAN">SANVIDHAN</option><option value="PARTY">PARTY</option></select></div>
+                <div class="form-group"><label for="lamiSize">Lamination Size</label><select id="lamiSize" name="LAMI SIZE"><option value="NA">NA</option><option value="12x18">12x18</option><option value="18x23">18x23</option><option value="A4">A4</option></select></div>
+                <div class="form-group"><label for="enveSize">Envelope Size</label><select id="enveSize" name="ENVE SIZE"><option value="NA">NA</option><option value="9x4">9x4</option><option value="9x6">9x6</option><option value="9X11">9X11</option></select></div>
+                <div class="form-group"><label for="ctpNo">CTP No.</label><input type="number" id="ctpNo" name="CTP NO." value="4"></div>
+                <div class="form-group full-width"><label for="narration">Narration</label><textarea id="narration" name="NARRATION" rows="3"></textarea></div>
+                <div class="form-group"><label for="printingCost">Printing Cost</label><input type="number" step="0.01" id="printingCost" name="PRINTING COST" placeholder="0.00"></div>
+                <div class="form-group"><label for="paperCost">Paper Cost</label><input type="number" step="0.01" id="paperCost" name="PAPER COST" placeholder="0.00"></div>
+                <div class="form-group"><label for="lamiCost">Lamination Cost</label><input type="number" step="0.01" id="lamiCost" name="LAMI COST" placeholder="0.00"></div>
+                <div class="form-group"><label for="enveCost">Envelope Cost</label><input type="number" step="0.01" id="enveCost" name="ENVE COST" placeholder="0.00"></div>
+                <div class="form-group"><label for="received">Received Amount</label><input type="number" step="0.01" id="received" name="RECIEVED" placeholder="0.00"></div>
+                <div class="form-group"><label for="total">Total</label><input type="number" step="0.01" id="total" name="TOTAL" placeholder="0.00" readonly></div>
+                <div class="form-group full-width"><label for="balAmt">Balance Amount</label><input type="number" step="0.01" id="balAmt" name="BAL AMT" placeholder="0.00" readonly></div>
+            </div>
+            <div class="form-group full-width"><button type="submit">Submit Job</button></div>
+        </form>
+        <div id="message"></div>
+    </div>
+
+    <div class="container" id="search-container">
+        <h2>Search Job Records</h2>
+        <input type="text" id="search-input" placeholder="Type to search by Party Name, Job Details, etc.">
+        <div id="data-display">
+            <div class="loader">Loading data...</div>
+            <table id="data-table" style="display:none;">
+                <thead>
+                    <tr id="table-headers"></tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'; // 
+        const form = document.getElementById('jobForm');
+        const messageDiv = document.getElementById('message');
+
+        // NEW: Set today's date automatically
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+            fetchData(); // Fetch data when page loads
+        });
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            messageDiv.textContent = 'Submitting...';
+            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        messageDiv.textContent = 'Job submitted successfully!';
+                        messageDiv.style.color = 'green';
+                        form.reset();
+                        document.getElementById('date').value = new Date().toISOString().split('T')[0];
+                        document.getElementById('ctpNo').value = '4';
+                        fetchData(); // Refresh data after submission
+                    } else {
+                        throw new Error(data.message || 'Unknown error occurred.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    messageDiv.textContent = 'Error! Could not submit job.';
+                    messageDiv.style.color = 'red';
+                });
+            setTimeout(() => { messageDiv.textContent = ''; }, 5000);
+        });
+
+        const printingCostInput=document.getElementById("printingCost"),paperCostInput=document.getElementById("paperCost"),lamiCostInput=document.getElementById("lamiCost"),enveCostInput=document.getElementById("enveCost"),receivedInput=document.getElementById("received"),totalInput=document.getElementById("total"),balAmtInput=document.getElementById("balAmt"),costInputs=[printingCostInput,paperCostInput,lamiCostInput,enveCostInput];function calculateTotal(){let e=0;costInputs.forEach((t=>{e+=parseFloat(t.value)||0})),totalInput.value=e.toFixed(2),calculateBalance()}function calculateBalance(){const e=parseFloat(totalInput.value)||0,t=parseFloat(receivedInput.value)||0;balAmtInput.value=(e-t).toFixed(2)}costInputs.forEach((e=>{e.addEventListener("input",calculateTotal)})),receivedInput.addEventListener("input",calculateBalance);
+        
+        // --- NEW: Data Fetching and Search Logic ---
+        const searchInput = document.getElementById('search-input');
+        const tableBody = document.getElementById('table-body');
+        const tableHeaders = document.getElementById('table-headers');
+        const loader = document.querySelector('.loader');
+        const dataTable = document.getElementById('data-table');
+        let sheetData = [];
+
+        async function fetchData() {
+            try {
+                loader.style.display = 'block';
+                dataTable.style.display = 'none';
+                const response = await fetch(scriptURL);
+                const data = await response.json();
+                sheetData = data;
+                displayData(sheetData);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                loader.textContent = 'Failed to load data.';
+            }
+        }
+
+        function displayData(data) {
+            tableHeaders.innerHTML = '';
+            tableBody.innerHTML = '';
+
+            if (data.length === 0) {
+                loader.textContent = 'No data found.';
+                loader.style.display = 'block';
+                dataTable.style.display = 'none';
+                return;
+            }
+
+            const headers = data[0];
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                tableHeaders.appendChild(th);
+            });
+            
+            const rows = data.slice(1);
+            rows.reverse().forEach(rowData => { // Show most recent first
+                const tr = document.createElement('tr');
+                rowData.forEach(cellData => {
+                    const td = document.createElement('td');
+                    td.textContent = cellData;
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+            
+            loader.style.display = 'none';
+            dataTable.style.display = 'table';
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            if (!searchTerm) {
+                displayData(sheetData);
+                return;
+            }
+
+            const headers = sheetData[0];
+            const filteredData = sheetData.slice(1).filter(row => {
+                return row.some(cell => cell.toString().toLowerCase().includes(searchTerm));
+            });
+
+            displayData([headers, ...filteredData]);
+        });
+    </script>
+</body>
+</html>

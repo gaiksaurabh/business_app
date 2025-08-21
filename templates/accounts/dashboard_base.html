@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title|default:"Dashboard" }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>{{ dashboard_title }}</h2>
+            <button class="hamburger" onclick="toggleSidebar()">☰</button>
+        </div>
+        <ul class="sidebar-menu">
+            {% for item in sidebar_items %}
+            <li><a href="{{ item.url }}">{{ item.name|title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+
+    <div class="main-content">
+        <div class="topbar">
+            <h3>Welcome, {{ first_name|title }}</h3>
+        </div>
+        <div class="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+</html>
+
+<script src="{% static 'js/dashboard.js' %}"></script>
+</body>
+
+</html>

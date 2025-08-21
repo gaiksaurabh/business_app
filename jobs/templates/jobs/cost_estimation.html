@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cost Estimation Tool</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+<div class="container">
+    <h1 class="mb-4">📊 Cost Estimation Tool</h1>
+
+    <!-- File Upload -->
+    <form method="post" enctype="multipart/form-data" class="mb-4">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-md-6">
+                <input type="file" name="excel_file" class="form-control" accept=".xlsx,.xls" required>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-success w-100">Upload</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Dropdown for Sheets -->
+    {% if dropdowns %}
+    <form method="post" class="row g-3 mb-4">
+        {% csrf_token %}
+        <input type="hidden" name="file_path" value="{{ file_path }}">
+        <div class="col-md-6">
+            <label class="form-label">Choose Sheet:</label>
+            <select name="sheet" class="form-select">
+                {% for key, value in dropdowns.items %}
+                    <option value="{{ key }}" {% if key == selected_sheet %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2 align-self-end">
+            <button type="submit" class="btn btn-primary w-100">Load Data</button>
+        </div>
+    </form>
+    {% endif %}
+
+    <!-- Data Table -->
+    {% if selected_data %}
+        <h4 class="mb-3">Showing Data from <b>{{ selected_sheet }}</b></h4>
+        <div class="table-responsive">
+            <table id="dataTable" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        {% for cell in selected_data.0 %}
+                            <th>{{ cell }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in selected_data|slice:"1:" %}
+                        <tr>
+                            {% for cell in row %}
+                                <td>{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#dataTable').DataTable({
+            pageLength: 20,
+            scrollX: true,
+            lengthMenu: [10, 20, 50, 100]
+        });
+    });
+</script>
+</body>
+</html>

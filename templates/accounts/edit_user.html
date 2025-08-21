@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg mx-auto">
+    <h2 class="text-2xl font-semibold text-indigo-600 mb-6 text-center">Edit User</h2>
+
+    <form method="post" action="{% url 'accounts:edit_user' user.id %}" class="space-y-4">
+      {% csrf_token %}
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block font-medium text-gray-700 mb-1">First Name</label>
+          {{ form.first_name|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" }}
+        </div>
+
+        <div>
+          <label class="block font-medium text-gray-700 mb-1">Last Name</label>
+          {{ form.last_name|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" }}
+        </div>
+
+        <div class="form-group md:col-span-2">
+          <label class="block font-medium text-gray-700 mb-1">Email</label>
+          {{ form.email|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" }}
+        </div>
+
+        <div class="form-group mt-3">
+          <label class="block font-medium text-gray-700 mb-1">User ID</label>
+          {{ form.username|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" }}
+        </div>
+
+        <!-- Password field with current password editable -->
+        <div class="form-group mt-3">
+          <label class="block font-medium text-gray-700 mb-1">Password</label>
+          
+          <!-- Show current password as editable field -->
+          <div class="mb-2">
+            <div class="flex items-center">
+              <input type="text" 
+                     name="current_password" 
+                     value="{% if user.account_profile.raw_password %}{{ user.account_profile.raw_password }}{% elif user.customer_profile.raw_password %}{{ user.customer_profile.raw_password }}{% endif %}" 
+                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                     placeholder="Enter password">
+              <span class="ml-2 text-green-600" title="Editable password">
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mt-3">
+          <label class="block font-medium text-gray-700 mb-1">WhatsApp Number</label>
+          {{ form.whatsapp_number|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"|attr:"placeholder:+91XXXXXXXXXX" }}
+        </div>
+
+        <div class="form-group mt-3">
+          <label class="block font-medium text-gray-700 mb-1">Press Name</label>
+          {{ form.press_name|add_class:"w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"|attr:"placeholder:Press/Business Name" }}
+        </div>
+        
+      </div>
+
+      <div class="flex justify-between mt-6 pt-4 border-t border-gray-200">
+        <a href="{% url 'accounts:all_users' %}"
+          class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-200 font-medium">
+          Cancel
+        </a>
+        <button type="submit"
+          class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200 font-medium">
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+</style>
+{% endblock %}

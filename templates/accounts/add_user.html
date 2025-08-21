@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Add User{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg mx-auto">
+    <h2 class="text-2xl font-semibold text-indigo-600 mb-6 text-center">Add New User</h2>
+
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+
+      <div class="form-group grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="form-group">
+          <label class="block font-medium text-gray-700 mb-1">Role</label>
+          {{ form.role|add_class:"border rounded px-3 py-2 w-full" }}
+          {% for error in form.role.errors %}
+          <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <div class="form-group" id="staff-type-group" style="display: none;">
+          <label class="block font-medium text-gray-700 mb-1">Staff Type</label>
+          {{ form.staff_type|add_class:"border rounded px-3 py-2 w-full" }}
+          {% for error in form.staff_type.errors %}
+          <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <div class="form-group" id="customer-type-group" style="display: none;">
+          <label class="block font-medium text-gray-700 mb-1">Customer Type</label>
+          {{ form.customer_type|add_class:"border rounded px-3 py-2 w-full" }}
+          {% for error in form.customer_type.errors %}
+          <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="form-group">
+          <label class="block font-medium text-gray-700 mb-1">First Name</label>
+          {{ form.first_name|add_class:"border rounded px-3 py-2 w-full"|attr:"placeholder:First Name" }}
+          {% for error in form.first_name.errors %}
+          <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <div class="form-group">
+          <label class="block font-medium text-gray-700 mb-1">Last Name</label>
+          {{ form.last_name|add_class:"border rounded px-3 py-2 w-full"|attr:"placeholder:Last Name" }}
+          {% for error in form.last_name.errors %}
+          <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <div class="form-group md:col-span-2">
+          <label class="block font-medium text-gray-700 mb-1">Email</label>
+          {{ form.email|add_class:"border rounded px-3 py-2 w-full"|attr:"placeholder:Email" }}
+          {% for error in form.email.errors %}
+          <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <div class="form-group">
+          <label class="block font-medium text-gray-700 mb-1">WhatsApp Number</label>
+          {{ form.whatsapp_number|add_class:"border rounded px-3 py-2 w-full"|attr:"placeholder:+91XXXXXXXXXX" }}
+          {% for error in form.whatsapp_number.errors %}
+          <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <div class="form-group">
+          <label class="block font-medium text-gray-700 mb-1">Press Name</label>
+          {{ form.press_name|add_class:"border rounded px-3 py-2 w-full"|attr:"placeholder:Press/Business Name" }}
+          {% for error in form.press_name.errors %}
+          <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="pt-4">
+        <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Create
+          User</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const roleSelect = document.querySelector('select[name="role"]');
+    const staffTypeGroup = document.getElementById('staff-type-group');
+    const customerTypeGroup = document.getElementById('customer-type-group');
+
+    function toggleDropdowns() {
+      // Clear any previous errors on the hidden fields
+      staffTypeGroup.querySelectorAll('p.text-red-500').forEach(p => p.remove());
+      customerTypeGroup.querySelectorAll('p.text-red-500').forEach(p => p.remove());
+
+      staffTypeGroup.style.display = 'none';
+      customerTypeGroup.style.display = 'none';
+
+      if (roleSelect.value === 'Staff' || roleSelect.value === 'Admin') {
+        staffTypeGroup.style.display = 'block';
+      } else if (roleSelect.value === 'Customer') {
+        customerTypeGroup.style.display = 'block';
+      }
+    }
+
+    // Initial check on page load
+    toggleDropdowns();
+
+    // Event listener for changes
+    roleSelect.addEventListener('change', toggleDropdowns);
+  });
+</script>
+{% endblock %}
